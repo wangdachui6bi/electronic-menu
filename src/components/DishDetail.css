@@ -1,0 +1,154 @@
+.dish-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+  animation: overlayIn 0.2s ease;
+}
+
+.dish-detail {
+  background: var(--card-bg);
+  border-radius: 16px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: formIn 0.25s ease;
+}
+
+.dish-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dish-detail__header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dish-detail__close {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dish-detail__close:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.dish-detail__body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.dish-detail__img-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.dish-detail__img-wrap img {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
+.dish-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.dish-detail__tag {
+  background: var(--tag-bg);
+  color: var(--text);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.dish-detail__desc {
+  margin: 0 0 20px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.dish-detail__steps h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dish-detail__steps ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.dish-detail__steps li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.dish-detail__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.dish-detail__btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.dish-detail__btn--secondary {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.dish-detail__btn--secondary:hover {
+  background: var(--hover);
+}
+
+.dish-detail__btn--primary {
+  border: none;
+  background: var(--primary);
+  color: #fff;
+}
+
+.dish-detail__btn--primary:hover {
+  filter: brightness(1.08);
+}
