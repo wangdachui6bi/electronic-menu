@@ -67,8 +67,15 @@
   font-weight: 600;
 }
 
-.online__search {
+.online__select {
   margin-left: auto;
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.online__search {
   display: flex;
   gap: 8px;
   align-items: center;
@@ -210,6 +217,11 @@
 
 .online__ingredients {
   padding-left: 18px;
+}
+
+.online__steps {
+  padding-left: 18px;
+  line-height: 1.6;
 }
 
 .online__instructions {

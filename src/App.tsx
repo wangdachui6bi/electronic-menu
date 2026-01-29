@@ -138,10 +138,10 @@ export default function App() {
           .join('\n')}`
       : ''
 
-    const steps = (use.instructions ?? '')
+    const steps = (use.steps?.length ? use.steps : (use.instructions ?? '')
       .split(/\r?\n/)
       .map((s) => s.trim())
-      .filter(Boolean)
+      .filter(Boolean))
 
     const dish = createDish({
       name: title,

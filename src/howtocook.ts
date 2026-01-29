@@ -1,4 +1,5 @@
 import type { OnlineRecipe } from './online'
+import { stripMarkdownBlock, stripMarkdownInline } from './markdown'
 
 const OWNER = 'Anduin2017'
 const REPO = 'HowToCook'
@@ -85,18 +86,26 @@ export async function fetchHowToCookRecipe(path: string): Promise<OnlineRecipe> 
   if (!res.ok) throw new Error('无法加载菜谱详情（网络异常）')
   const md = await res.text()
 
-  // best-effort parse ingredients + steps
+  // parse ingredients + steps（尽量结构化，导入更干净）
   const ingredients: Array<{ name: string; measure: string }> = []
   const steps: string[] = []
 
   const lines = md.split(/\r?\n/)
   let mode: 'none' | 'ingredients' | 'steps' = 'none'
+  let inCode = false
 
   for (const raw of lines) {
-    const line = raw.trim()
-    if (/^##\s+/.test(line)) {
-      if (line.includes('必备原料')) mode = 'ingredients'
-      else if (line.includes('操作')) mode = 'steps'
+    const trimmed = raw.trim()
+
+    if (trimmed.startsWith('```')) {
+      inCode = !inCode
+      continue
+    }
+    if (inCode) continue
+
+    if (/^##\s+/.test(trimmed)) {
+      if (trimmed.includes('必备原料')) mode = 'ingredients'
+      else if (trimmed.includes('操作')) mode = 'steps'
       else mode = 'none'
       continue
     }
@@ -105,21 +114,36 @@ export async function fetchHowToCookRecipe(path: string): Promise<OnlineRecipe> 
       // table row: | 原料 | 用量 |
       const t = raw.match(/^\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*$/)
       if (t) {
-        const a = t[1].trim()
-        const b = t[2].trim()
-        if (a && b && a !== '原料' && a !== '---') ingredients.push({ name: a, measure: b })
+        const a = stripMarkdownInline(t[1].trim())
+        const b = stripMarkdownInline(t[2].trim())
+        if (a && b && a !== '原料' && a !== '---' && b !== '用量') {
+          ingredients.push({ name: a, measure: b })
+        }
       }
     }
 
     if (mode === 'steps') {
-      const li = line.match(/^\d+\.?\s*(.+)$/)
-      if (li) steps.push(li[1].trim())
-      else if (line.startsWith('- ')) steps.push(line.slice(2).trim())
+      // 支持：1. xxx / 1) xxx / - xxx / * xxx
+      const li = trimmed.match(/^\d+\s*[.)、]?\s*(.+)$/)
+      if (li) {
+        const s = stripMarkdownInline(li[1])
+        if (s) steps.push(s)
+        continue
+      }
+      const bullet = trimmed.match(/^[-*+]\s+(.+)$/)
+      if (bullet) {
+        const s = stripMarkdownInline(bullet[1])
+        if (s) steps.push(s)
+        continue
+      }
     }
   }
 
   // derive name from filename
   const nameFromPath = decodeURIComponent(path.split('/').pop() || '').replace(/\.md$/, '')
+
+  // instructions: 用纯文本（去掉大部分 markdown 结构），避免导入时混入标记
+  const plain = stripMarkdownBlock(md)
 
   return {
     id: `howtocook:${path}`,
@@ -127,7 +151,8 @@ export async function fetchHowToCookRecipe(path: string): Promise<OnlineRecipe> 
     category: '',
     area: '中式',
     provider: 'howtocook',
-    instructions: md,
+    instructions: plain,
+    steps: steps.length ? steps : undefined,
     ingredients: ingredients.length ? ingredients : undefined,
     tags: undefined,
   }

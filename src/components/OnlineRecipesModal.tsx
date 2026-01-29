@@ -15,6 +15,7 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
   const [items, setItems] = useState<OnlineRecipe[]>([])
   const [query, setQuery] = useState('')
   const [detail, setDetail] = useState<OnlineRecipe | null>(null)
+  const [filterCat, setFilterCat] = useState('')
 
   const title = useMemo(() => (tab === 'latest' ? '中文菜谱推荐' : '搜索菜谱'), [tab])
 
@@ -23,6 +24,7 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
     setError('')
     try {
       const list = await fetchLatestRecipes()
+      console.log('list', list)
       setItems(list)
     } catch (e) {
       // 避免直接把技术错误怼给用户
@@ -63,14 +65,27 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
     }
   }
 
+  const categories = useMemo(() => {
+    const set = new Set<string>()
+    for (const it of items) {
+      if (it.category) set.add(it.category)
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b))
+  }, [items])
+
+  const filteredItems = useMemo(() => {
+    if (!filterCat) return items
+    return items.filter((it) => it.category === filterCat)
+  }, [items, filterCat])
+
   const renderList = () => {
     if (loading && items.length === 0) return <p className="online__hint">加载中…</p>
     if (error) return <p className="online__error">{error}</p>
-    if (items.length === 0) return <p className="online__hint">暂无结果</p>
+    if (filteredItems.length === 0) return <p className="online__hint">暂无结果</p>
 
     return (
       <ul className="online__grid">
-        {items.map((r) => (
+        {filteredItems.map((r) => (
           <li key={r.id} className="online__card">
             <button type="button" className="online__card-main" onClick={() => openDetail(r)}>
               {r.thumb ? <img className="online__thumb" src={r.thumb} alt={r.name} /> : <div className="online__thumb online__thumb--empty" />}
@@ -110,6 +125,7 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
                 onClick={() => {
                   setDetail(null)
                   setTab('latest')
+                  setFilterCat('')
                   loadLatest()
                 }}
               >
@@ -122,10 +138,27 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
                   setDetail(null)
                   setTab('search')
                   setItems([])
+                  setFilterCat('')
                 }}
               >
                 搜索
               </button>
+
+              {categories.length > 0 && (
+                <select
+                  className="online__select"
+                  value={filterCat}
+                  onChange={(e) => setFilterCat(e.target.value)}
+                  title="按分类筛选"
+                >
+                  <option value="">全部分类</option>
+                  {categories.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              )}
 
               {tab === 'search' && (
                 <form
@@ -197,7 +230,16 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
               </section>
             ) : null}
 
-            {detail.instructions ? (
+            {detail.steps?.length ? (
+              <section className="online__section">
+                <h3>做法</h3>
+                <ol className="online__steps">
+                  {detail.steps.map((s, i) => (
+                    <li key={i}>{s}</li>
+                  ))}
+                </ol>
+              </section>
+            ) : detail.instructions ? (
               <section className="online__section">
                 <h3>做法</h3>
                 <pre className="online__instructions">{detail.instructions}</pre>

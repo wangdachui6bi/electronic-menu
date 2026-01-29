@@ -6,7 +6,10 @@ export type OnlineRecipe = {
   thumb?: string
   category?: string
   area?: string
+  /** 原始/纯文本说明（用于展示/兜底） */
   instructions?: string
+  /** 结构化步骤（用于导入到“我的菜单”时生成 steps） */
+  steps?: string[]
   tags?: string[]
   youtube?: string
   source?: string
