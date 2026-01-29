@@ -90,6 +90,21 @@
   margin-bottom: 6px;
 }
 
+.dish-form__mini {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.dish-form__mini:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
 .dish-form__field input[type="text"],
 .dish-form__field textarea {
   width: 100%;

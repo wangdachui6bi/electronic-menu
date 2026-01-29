@@ -26,11 +26,13 @@ const emptyForm: FormValues = {
 
 type Props = {
   initial?: Dish | null
+  categories: string[]
+  onManageCategories: () => void
   onSubmit: (values: FormValues) => void
   onCancel: () => void
 }
 
-export default function DishForm({ initial, onSubmit, onCancel }: Props) {
+export default function DishForm({ initial, categories, onManageCategories, onSubmit, onCancel }: Props) {
   const [form, setForm] = useState<FormValues>(() =>
     initial
       ? {
@@ -111,13 +113,24 @@ export default function DishForm({ initial, onSubmit, onCancel }: Props) {
           </div>
           <div className="dish-form__row">
             <div className="dish-form__field">
-              <label>分类</label>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                <label>分类</label>
+                <button type="button" className="dish-form__mini" onClick={onManageCategories}>
+                  管理分类
+                </button>
+              </div>
               <input
                 type="text"
                 value={form.category}
                 onChange={(e) => handleChange('category', e.target.value)}
                 placeholder="如：家常菜"
+                list="dish-category-list"
               />
+              <datalist id="dish-category-list">
+                {categories.map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
             </div>
             <div className="dish-form__field">
               <label>烹饪时间</label>
