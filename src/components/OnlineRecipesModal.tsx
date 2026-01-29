@@ -16,7 +16,7 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
   const [query, setQuery] = useState('')
   const [detail, setDetail] = useState<OnlineRecipe | null>(null)
 
-  const title = useMemo(() => (tab === 'latest' ? '最新菜谱' : '搜索菜谱'), [tab])
+  const title = useMemo(() => (tab === 'latest' ? '中文菜谱推荐' : '搜索菜谱'), [tab])
 
   const loadLatest = async () => {
     setLoading(true)
@@ -25,7 +25,8 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
       const list = await fetchLatestRecipes()
       setItems(list)
     } catch (e) {
-      setError(e instanceof Error ? e.message : '加载失败')
+      // 避免直接把技术错误怼给用户
+      setError('加载失败，请检查网络或稍后重试')
     } finally {
       setLoading(false)
     }
@@ -112,7 +113,7 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
                   loadLatest()
                 }}
               >
-                最新
+                推荐
               </button>
               <button
                 type="button"
@@ -138,7 +139,7 @@ export default function OnlineRecipesModal({ onClose, onImport }: Props) {
                     type="search"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="输入菜名关键词（英文）"
+                    placeholder="输入菜名关键词（中文或英文）"
                   />
                   <button type="submit">搜索</button>
                 </form>
