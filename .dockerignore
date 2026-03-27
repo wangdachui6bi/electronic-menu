@@ -1,0 +1,7 @@
+node_modules
+dist
+.git
+.idea
+android
+*.log
+.DS_Store

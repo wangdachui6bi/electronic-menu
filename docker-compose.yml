@@ -1,0 +1,11 @@
+services:
+  menu-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_MENU_API_BASE: ${VITE_MENU_API_BASE}
+    container_name: menu-app
+    restart: unless-stopped
+    ports:
+      - "3002:80"
