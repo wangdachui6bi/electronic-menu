@@ -356,6 +356,7 @@ export default function App() {
 
   function openEditDish(dish: MenuDish) {
     setDishDraft(toDishDraft(dish))
+    setSelectedDishId('')
     setDishEditorOpen(true)
   }
 
@@ -994,7 +995,7 @@ export default function App() {
         </div>
       )}
 
-      {selectedDish && (
+      {selectedDish && !dishEditorOpen && (
         <div className="modal-shell" onClick={() => setSelectedDishId('')}>
           <div className="modal-card modal-card--wide" onClick={(event) => event.stopPropagation()}>
             <div className="modal-card__head">
