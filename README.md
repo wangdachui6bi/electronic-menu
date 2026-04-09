@@ -1,13 +1,18 @@
-# 两个人的点菜台
+# 同住工具箱
 
-给你和女朋友一起用的 H5 点菜应用。
+`menu-app` 现在已经升级成 Vue3 的网页端工具集合，不再只是单一的点菜页。
 
-它现在是独立部署的前端站点，`common-server` 只负责接口：
-- 菜单增删改
-- 点菜请求
-- 评论
-- 实时更新
-- 飞书推送
+当前内置两个正式工具：
+- 共享点菜台：菜单管理、点菜请求、评论、实时同步、在线菜谱导入
+- 共享相册：原图/原视频上传、在线播放、评论、精选、下载到本地
+
+当前产品结构：
+- 登录 / 注册入口
+- 登录后私有工作台
+- 私有相册与共享相册并存
+- 可按用户配置菜单功能权限
+
+前端是独立部署的静态站点，接口统一走 `common-server`。
 
 ## 本地开发
 
@@ -22,9 +27,11 @@ npm run dev
 
 ```bash
 VITE_MENU_API_BASE=http://your-api-host:3600
-VITE_MENU_TOKEN=
 VITE_APP_BASE=/
 ```
+
+说明：
+- 登录后前端会把 session token 存在本地，自动附带到接口请求
 
 ## Docker 部署
 
@@ -37,9 +44,7 @@ VITE_APP_BASE=/
 ### 构建参数
 
 - `VITE_MENU_API_BASE`
-  点菜应用请求 `common-server` 的接口地址，比如 `https://api.xxx.com`
-- `VITE_MENU_TOKEN`
-  如果你启用了菜单访问口令，就填它
+  工具箱请求 `common-server` 的接口地址，比如 `https://api.xxx.com`
 - `VITE_APP_BASE`
   前端部署路径，独立域名部署就用 `/`
 
@@ -67,7 +72,6 @@ MENU_APP_PORT=8080
 MENU_APP_CONTAINER_NAME=menu-app
 
 VITE_MENU_API_BASE=https://api.your-domain.com
-VITE_MENU_TOKEN=
 VITE_APP_BASE=/
 ```
 
@@ -91,11 +95,11 @@ http://你的服务器IP:MENU_APP_PORT
 
 ## 和 common-server 的关系
 
-现在 `menu-app` 不再挂载到 `common-server` 的 `/menu` 路径下。
+现在 `menu-app` 不再挂载到 `common-server` 的某个子路径下，而是独立部署成一个网页站点。
 
-也就是说：
-- `menu-app` 单独部署成一个网页站点
-- `common-server` 只保留 `/api/menu` 这些接口
+后端目前会提供这些接口模块：
+- `/api/menu`：共享点菜相关
+- `/api/gallery`：共享相册相关
 
 ## 打包 APK
 
